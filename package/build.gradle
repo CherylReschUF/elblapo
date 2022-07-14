@@ -1,0 +1,102 @@
+/*
+ * Open Source Software published under the Apache Licence, Version 2.0.
+ */
+
+ext {
+    publishedVersion = project.version
+    bundlerScript = file('bin/build-package.sh')
+    applicationLibraryPath = file("${rootProject.buildDir}/libs")
+    javafxModulePath = file("${rootProject.buildDir}/javafx-modules")
+    mainJar = parent.jar.outputs.files[0].name
+    bundlePath = file("${buildDir}/bundle")
+    fileAssociations = file("${buildDir}/resources/main/file-associations.properties")
+    modules = 'javafx.controls,javafx.fxml,java.naming,java.sql'
+    extraBundlerArguments = []
+    if (operatingSystem.isMacOsX()) {
+        packageType = 'dmg'
+        appIcon = file('icons/mac/VocabHunter.icns')
+        sessionIcon = file('icons/mac/VocabHunterSession.icns')
+//        if (!project.hasProperty("unsigned")) {
+//            extraBundlerArguments = ['--mac-sign']
+//        }
+    } else if (operatingSystem.isLinux()) {
+        packageType = 'deb'
+        appIcon = file('icons/App1024.png')
+        sessionIcon = file('icons/Doc1024.png')
+    } else if (operatingSystem.isWindows()) {
+        packageType = 'exe'
+        appIcon = file('icons/windows/VocabHunter.ico')
+        sessionIcon = file('icons/windows/VocabHunterSession.ico').toString().replace("\\", "\\\\")
+        bundlerScript = file('bin/build-package.bat')
+    }
+    if (publishedVersion.endsWith('-SNAPSHOT')) {
+        publishedVersion = '1.0.0'
+    }
+}
+
+task recreateIconMacApp(type: Exec) {
+    description 'Regenerate the Mac application icon'
+    commandLine 'sh', file('bin/mac-icon.sh'), file('icons/App1024.png'), file('icons/mac'), 'VocabHunter'
+}
+
+task recreateIconMacSession(type: Exec) {
+    description 'Regenerate the Mac session file icon'
+    commandLine 'sh', file('bin/mac-icon.sh'), file('icons/Doc1024.png'), file('icons/mac'), 'VocabHunterSession'
+}
+
+task recreateIconWindowsApp(type: Exec) {
+    description 'Regenerate the Windows application icon'
+    commandLine 'sh', file('bin/windows-icon.sh'), file('icons/App1024.png'), file('icons/windows'), 'VocabHunter'
+}
+
+task recreateIconWindowsSession(type: Exec) {
+    description 'Regenerate the Windows session file icon'
+    commandLine 'sh', file('bin/windows-icon.sh'), file('icons/Doc1024.png'), file('icons/windows'), 'VocabHunterSession'
+}
+
+task recreateIcons(dependsOn: [recreateIconMacApp, recreateIconMacSession, recreateIconWindowsApp, recreateIconWindowsSession]) {
+    description 'Regenerate all the application bundle icons'
+}
+
+processResources {
+    expand(vocabHunterSessionIcon: sessionIcon)
+}
+
+task createBundle(type: Exec, dependsOn: [processResources, ':copyPython', ':copyDependencies', ':copyJavafxModules']) {
+    doFirst {
+        delete bundlePath
+    }
+    description 'Build the installable bundle'
+    inputs.dir("bin")
+    inputs.dir("icons")
+    inputs.file(fileAssociations)
+    inputs.dir(javafxModulePath)
+    inputs.dir(applicationLibraryPath)
+    outputs.dir(bundlePath)
+    if (operatingSystem.isWindows()) {
+        commandLine = ['cmd', '/c',
+                bundlerScript,
+                packageType,
+                "${javafxModulePath}",
+                applicationLibraryPath,
+                bundlePath,
+                mainJar,
+                publishedVersion,
+                fileAssociations,
+                appIcon,
+                "\"${modules}\""]
+    } else {
+        commandLine = ['sh',
+                       bundlerScript,
+                       packageType,
+                       "${javafxModulePath}",
+                       applicationLibraryPath,
+                       bundlePath,
+                       mainJar,
+                       publishedVersion,
+                       fileAssociations,
+                       appIcon,
+                       modules,
+                       *extraBundlerArguments]
+    }
+}

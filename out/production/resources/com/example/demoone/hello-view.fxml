@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="1008.0" style="-fx-background-color: #08a0ff;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demoone.controllers.FlawCatcherController">
+    <children>
+        <TabPane layoutY="27.0" prefHeight="596.0" prefWidth="1008.0" style="-fx-background-color: #08fcfe;" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="27.0">
+            <tabs>
+                <Tab style="-fx-background-color: white; -fx-text-fill: white;" text="Student Information">
+                    <content>
+                        <SplitPane dividerPositions="0.19543650793650794, 0.6378968253968254" prefHeight="400.0" prefWidth="600.0">
+                            <items>
+                                <AnchorPane id="button" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;">
+                                    <children>
+                                        <Label fx:id="label1" layoutX="35.0" layoutY="14.0" prefHeight="36.0" prefWidth="125.0" text="Static Analysis Tool" />
+                                        <Button fx:id="dir" layoutX="14.0" layoutY="63.0" mnemonicParsing="false" onAction="#onCatchFlawsClick" prefWidth="165.0" style="-fx-background-color: #08d0ff;" text="Load Students From File">
+                                        </Button>
+                                        <Button fx:id="clear" layoutX="15.0" layoutY="130.0" mnemonicParsing="false" onAction="#clearStudents" prefWidth="165.0" style="-fx-background-color: #08d0ff;" text="Clear Student Information" />
+                                        <Button layoutX="15.0" layoutY="162.0" mnemonicParsing="false" onAction="#exportStudents" prefWidth="165.0" style="-fx-background-color: #08d0ff;" text="Export Student Information" />
+                                        <Button fx:id="file" layoutX="14.0" layoutY="97.0" mnemonicParsing="false" onAction="#onCatchFlawsClick" prefHeight="26.0" prefWidth="167.0" style="-fx-background-color: #08d0ff;" text="Load Single Student" />
+                                    </children>
+                                </AnchorPane>
+                                <AnchorPane fx:id="middlePane" prefHeight="618.0" prefWidth="169.0">
+                                    <children>
+                                        <TableView fx:id="studentTable" layoutX="-7.0" prefHeight="591.0" prefWidth="368.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <columns>
+                                                <TableColumn fx:id="lNameCol" prefWidth="75.0" style="-fx-background-color: white;" text="Last Name" />
+                                                <TableColumn fx:id="fNameCol" prefWidth="75.0" style="-fx-background-color: #08d0ff;" text="First Name" />
+                                                <TableColumn fx:id="cNameCol" prefWidth="75.0" style="-fx-background-color: white;" text="Class Code" />
+                                                <TableColumn fx:id="fileNameCol" prefWidth="75.0" style="-fx-background-color: #08d0ff;" text="File Name" />
+                                            </columns>
+                                        </TableView>
+                                    </children>
+                                </AnchorPane>
+                                <AnchorPane prefHeight="618.0" prefWidth="400.0" style="-fx-background-color: white;">
+                                    <children>
+                                        <Label fx:id="studentFlaws" layoutX="14.0" layoutY="14.0" prefHeight="540.0" prefWidth="267.0" text="Extra Information" wrapText="true" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="81.0" AnchorPane.topAnchor="14.0" />
+                                    </children>
+                                </AnchorPane>
+                            </items>
+                        </SplitPane>
+                    </content>
+                </Tab>
+                <Tab style="-fx-background-color: white;" text="Statistics">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <Label fx:id="StatsLabel" layoutX="30.0" layoutY="14.0" text="Select Chart to Generate:"></Label>
+                                <Button fx:id="binaryPieChartButton" layoutX="30.0" layoutY="30" mnemonicParsing="false" onAction="#onSimplePieChartClick" prefWidth="750.0" text="Generate binary Pie Chart" />
+                                <Button fx:id="flawCountPieChartButton" layoutX="30.0" layoutY="60" mnemonicParsing="false" onAction="#onFlawCountPieChartClick" prefWidth="750.0" text="Generate flaw bucket Pie Chart" />
+                                <Button fx:id="simpleBarChartButton" layoutX="30.0" layoutY="90" mnemonicParsing="false" onAction="#onSimpleBarChartClick" prefWidth="750.0" text="Generate simple Bar Chart" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+        <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="1008.0" style="-fx-background-color: #08a0ff;">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Close" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Delete" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </children>
+    <stylesheets>
+        <URL value="@stylesheet.css" />
+    </stylesheets>
+</AnchorPane>

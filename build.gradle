@@ -1,0 +1,113 @@
+import org.gradle.internal.os.OperatingSystem
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
+}
+subprojects {
+    apply plugin: 'java'
+}
+
+group 'com.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.7.2'
+    operatingSystem = OperatingSystem.current()
+}
+
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainModule = 'com.example.demoone'
+    mainClass = 'com.example.demoone.FlawCatcherApplication'
+}
+
+javafx {
+    version = '17'
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web']
+}
+
+dependencies {
+    implementation('org.apache.commons:commons-csv:1.9.0')
+    implementation('org.controlsfx:controlsfx:11.1.0')
+    implementation('com.dlsc.formsfx:formsfx-core:11.4.2') {
+        exclude(group: 'org.openjfx')
+    }
+    implementation('net.synedra:validatorfx:0.1.13') { exclude(group: 'org.openjfx') }
+
+
+    implementation('org.kordamp.ikonli:ikonli-javafx:12.2.0')
+    implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
+    implementation('eu.hansolo:tilesfx:16.0.3') {
+        exclude(group: 'org.openjfx')
+    }
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+}
+
+test {
+    useJUnitPlatform()
+}
+processResources {
+    filesMatching('properties/*.properties') {
+        expand(
+                buildVersion: project.property("version"),
+                buildTimestamp: project.buildTimestamp
+        )
+    }
+}
+task copyPython(type: Copy ) {
+    from layout.projectDirectory.dir("python")
+    into "${buildDir}/libs/python"
+    eachFile {
+        if (it.relativePath.getFile(destinationDir).exists()) {
+            it.exclude()
+        }
+    }
+}
+task copyDependencies(type: Copy) {
+    from configurations.runtimeClasspath
+    from jar
+    exclude "javafx-*.jar"
+    into "${buildDir}/libs"
+    eachFile {
+        if (it.relativePath.getFile(destinationDir).exists()) {
+            it.exclude()
+        }
+    }
+}
+
+task copyJavafxModules(type: Copy) {
+    from configurations.runtimeClasspath
+    include "javafx-*${javafx.platform.classifier}.jar"
+    into "${buildDir}/javafx-modules"
+}
+
+task createStartScripts(type: CreateStartScripts) {
+    unixStartScriptGenerator = new CustomUnixStartScriptGenerator()
+    windowsStartScriptGenerator = new CustomWindowsStartScriptGenerator()
+}
+
+class CustomUnixStartScriptGenerator implements ScriptGenerator {
+    void generateScript(JavaAppStartScriptGenerationDetails details, Writer destination) {
+        // implementation
+    }
+}
+
+class CustomWindowsStartScriptGenerator implements ScriptGenerator {
+    void generateScript(JavaAppStartScriptGenerationDetails details, Writer destination) {
+        // implementation
+    }
+}

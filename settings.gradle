@@ -1,0 +1,3 @@
+rootProject.name = "demoone"
+include 'package'
+
